@@ -39,18 +39,8 @@
 .movies-list{
 	width:960px;
 }
-#genresList{
-	width:960px;
-}
-.movie-card{
-	display:inline-block;
-	float:left;
-}
 @media only screen(max-width:1000px){
 	.movies-list{
-		width:750px;
-	}
-	#genresList{
 		width:750px;
 	}
 }
@@ -58,25 +48,14 @@
 	.movies-list{
 		width:750px;
 	}
-	#genresList{
-		width:750px;
-	}
 }
 @media only screen(max-width:600px){
 	.movies-list{
-		width:550px;
-		display:inline-block;
-	}
-	#genresList{
 		width:550px;
 	}
 }
 @media only screen(max-width:450px){
 	.movies-list{
-		width:100%;
-		display:inline-block;
-	}
-	#genresList{
 		width:100%;
 	}
 }

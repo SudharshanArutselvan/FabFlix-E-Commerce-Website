@@ -1,4 +1,4 @@
-// A servelet to respond to login page
+// A servelet to respond to movie page
 
 
 import java.io.*;
@@ -9,14 +9,14 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class login extends HttpServlet
+public class movie extends HttpServlet
 {
 
 	public String getServletInfo()
 	{
 		return "Servlet connected";
 	}
-	public void doPost(HttpServletRequest request , HttpServletResponse response)
+	public void doGet(HttpServletRequest request , HttpServletResponse response)
 		throws IOException, ServletException
 	{
 		String user = "user";
@@ -31,29 +31,24 @@ public class login extends HttpServlet
 			Connection dbcon  = DriverManager.getConnection(url, user, pw);
 			Statement statement = dbcon.createStatement();
 
-			String email = request.getParameter("email");
-			String password = request.getParameter("password");
-			String query = "SELECT first_name,last_name from customers where email = '"+email+"' and password='"+password+"' ";
+			int movieID = Integer.parseInt(request.getParameter("id"));
+			String query = "SELECT * from movies where id = "+movieID;
 			ResultSet result = statement.executeQuery(query);
 			result.next();
-			String customerfn = result.getString("first_name");
-			String customerln = result.getString("last_name");
-			HttpSession session = request.getSession(true);
-			String sessionName = (String)session.getAttribute("name");
-		    if (sessionName == null) {
-		      sessionName = customerfn+" "+customerln;
-		    }
-		    session.setAttribute("name", sessionName); 
-			request.setAttribute("f_name",customerfn);
-			request.setAttribute("l_name",customerln);
-			request.getRequestDispatcher("/home").include(request,response);
+			out.println("<HTML>" +
+                            "<HEAD><TITLE>" +
+                            "MovieDB: Error" +
+                            "</TITLE></HEAD>\n<BODY>" +
+                            "<P>Movie: " +
+                            result.getString("title") + "</P></BODY></HTML>");
 			result.close();
 			statement.close();
 			dbcon.close();
 		}
 		catch(java.lang.Exception ex)
         {
-        	// request.getRequestDispatcher("index.jsp").include(request,response);
+        	//request.getRequestDispatcher("index.html").include(request,response);
+        	response.setContentType("text/html");
                 out.println("<HTML>" +
                             "<HEAD><TITLE>" +
                             "MovieDB: Error" +

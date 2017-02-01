@@ -34,11 +34,6 @@
 			}
 		}
     </style>
-    <script>
-    	if(window.location.pathname=="/Fablix/login"){
-    		location.replace("/Fablix/home");
-    	}
-    </script>
 </head>
 <body style="">
 	<div id="mainHeading" class="row" style="">
@@ -48,15 +43,30 @@
 	</div>
 	<center>
 		<div id="genresList" class="row" style="">
+			<button id="browse" type="button" class="btn btn-default" style="margin: 25px 20px 0px;width:140px;">Browse by movies</button>
+		</div><br>
+		<div style="width:100%;padding:20px;"> 
 			<% 
 				String user = "user";
 				String pw = "vidhya567";
 				String url = "jdbc:mysql://localhost:3306/moviedb";
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				Connection dbcon  = DriverManager.getConnection(url, user, pw);
+				Statement statement = dbcon.createStatement();
+				String genquery = "SELECT name from genres ORDER BY name";
+				ResultSet genresult = statement.executeQuery(genquery);
+				int i=1;
+				while(genresult.next())
+				{  
+						
+					String genname= genresult.getString("name");
+						
+					out.println("<div class='col-xs-2' style='text-align:left;'><button id='browse' type='button' class='btn btn-default' style=''>"+genname+"</button></div>");
+					i++;
+
+				}
 			%>
-			<button type="button" id="browse" class="btn btn-default" style="margin: 25px 20px 0px;width:140px;">Browse by Genres</button>
-		</div><br>
+		</div>
 		<div class="row movies-list" style="margin:20px;">
 			<% 
 				Statement statement1 = dbcon.createStatement();
@@ -121,7 +131,7 @@
 		$(source).attr("src",'placeholder-movie.png');
 	}
 	$("#browse").click(function(){
-		location.replace("/Fablix/genre");
+		location.replace("/Fablix/home");
 	});
 	$("#logoHeading").click(function(){
 		location.replace("/Fablix/home");

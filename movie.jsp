@@ -34,11 +34,6 @@
 			}
 		}
     </style>
-    <script>
-    	if(window.location.pathname=="/Fablix/login"){
-    		location.replace("/Fablix/home");
-    	}
-    </script>
 </head>
 <body style="">
 	<div id="mainHeading" class="row" style="">
@@ -47,21 +42,16 @@
 		<div class="col-md-3" Style="margin:35px 0px;right:0;position:absolute;font-size:18px;"><%out.print(session.getAttribute("name"));%></div>
 	</div>
 	<center>
-		<div id="genresList" class="row" style="">
+		<div class="row movies-list" style="margin:20px;">
 			<% 
 				String user = "user";
 				String pw = "vidhya567";
 				String url = "jdbc:mysql://localhost:3306/moviedb";
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				Connection dbcon  = DriverManager.getConnection(url, user, pw);
-			%>
-			<button type="button" id="browse" class="btn btn-default" style="margin: 25px 20px 0px;width:140px;">Browse by Genres</button>
-		</div><br>
-		<div class="row movies-list" style="margin:20px;">
-			<% 
-				Statement statement1 = dbcon.createStatement();
-				String moviequery = "SELECT * from movies limit 10;";
-				ResultSet movieresult = statement1.executeQuery(moviequery);
+				Statement statement = dbcon.createStatement();
+				String moviequery = "SELECT * from movies where id="+request.getParameter("id");
+				ResultSet movieresult = statement.executeQuery(moviequery);
 				while(movieresult.next())
 				{  
 					int movieID = movieresult.getInt("id");
@@ -109,20 +99,13 @@
 	$(".movie-card").click(function(){
 		var link=$(this).attr("href");
 		var url = window.location.href;
-		console.log(url.substring(url.length-1));
-		if(url.substring(url.length-1)=="e")
-			url = url.substring(0, url.length - 5);
-		else
-			url = url.substring(0, url.length - 6);
+		url = url.substring(0, url.length - 6);
 		url=url+link;
 		location.replace(url);
 	});
 	function placeholder(source){
 		$(source).attr("src",'placeholder-movie.png');
 	}
-	$("#browse").click(function(){
-		location.replace("/Fablix/genre");
-	});
 	$("#logoHeading").click(function(){
 		location.replace("/Fablix/home");
 	});
