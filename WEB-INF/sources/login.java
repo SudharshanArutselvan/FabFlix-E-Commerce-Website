@@ -35,32 +35,58 @@ public class login extends HttpServlet
 			String password = request.getParameter("password");
 			String query = "SELECT first_name,last_name from customers where email = '"+email+"' and password='"+password+"' ";
 			ResultSet result = statement.executeQuery(query);
-			result.next();
-			String customerfn = result.getString("first_name");
-			String customerln = result.getString("last_name");
 			HttpSession session = request.getSession(true);
-			String sessionName = (String)session.getAttribute("name");
-		    if (sessionName == null) {
-		      sessionName = customerfn+" "+customerln;
-		    }
-		    session.setAttribute("name", sessionName); 
-			request.setAttribute("f_name",customerfn);
-			request.setAttribute("l_name",customerln);
-			request.getRequestDispatcher("/home").include(request,response);
-			result.close();
-			statement.close();
-			dbcon.close();
+			if(result.next()){
+				String customerfn = result.getString("first_name");
+				String customerln = result.getString("last_name");
+				String sessionName = (String)session.getAttribute("name");
+				String check = (String)session.getAttribute("check");
+			    if (sessionName == null) {
+			      	sessionName = customerfn+" "+customerln;
+			      	Cookie cookie = new Cookie("username",sessionName);
+					response.addCookie(cookie);
+			    }
+			    if(check==null){
+			    	check="success";
+			    }
+			    session.setAttribute("name", sessionName); 
+			    session.setAttribute("check", check); 
+				request.setAttribute("f_name",customerfn);
+				request.setAttribute("l_name",customerln);
+				request.getRequestDispatcher("/home").include(request,response);
+				result.close();
+				statement.close();
+				dbcon.close();
+			}
+			else{
+				String sessionName = (String)session.getAttribute("name");
+				String check = (String)session.getAttribute("check");
+			    if(check==null){
+			    	check="failed";
+			    }
+			    session.setAttribute("name", sessionName); 
+			    session.setAttribute("check", check); 
+				request.getRequestDispatcher("index.jsp").include(request,response);
+				result.close();
+				statement.close();
+				dbcon.close();
+			}
+			
 		}
 		catch(java.lang.Exception ex)
         {
-        	// request.getRequestDispatcher("index.jsp").include(request,response);
-                out.println("<HTML>" +
-                            "<HEAD><TITLE>" +
-                            "MovieDB: Error" +
-                            "</TITLE></HEAD>\n<BODY>" +
-                            "<P>SQL error in doPost: " +
-                            ex.getMessage() + "</P></BODY></HTML>");
-                return;
+        	HttpSession session = request.getSession(true);
+        	String check = (String)session.getAttribute("check");
+		    session.setAttribute("check", "failed"); 
+        	request.setAttribute("login",false);
+        	request.getRequestDispatcher("index.jsp").include(request,response);
+                // out.println("<HTML>" +
+                //             "<HEAD><TITLE>" +
+                //             "MovieDB: Error" +
+                //             "</TITLE></HEAD>\n<BODY>" +
+                //             "<P>SQL error in doPost: " +
+                //             ex.getMessage() + "</P></BODY></HTML>");
+                // return;
         }
          out.close();
     }

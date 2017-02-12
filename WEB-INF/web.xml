@@ -88,4 +88,64 @@
     <url-pattern>/genre</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>SearchResult</servlet-name>
+    <jsp-file>/result.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SearchResult</servlet-name>
+    <url-pattern>/result</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Cart</servlet-name>
+    <jsp-file>/cart.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Cart</servlet-name>
+    <url-pattern>/cart</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>readme</servlet-name>
+    <jsp-file>/readme.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>readme</servlet-name>
+    <url-pattern>/reports/readme</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>like</servlet-name>
+    <jsp-file>/like.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>like</servlet-name>
+    <url-pattern>/reports/like-predicate</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>Serveletlogout</servlet-name>
+    <servlet-class>logout</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Serveletlogout</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>checkout</servlet-name>
+    <servlet-class>checkout</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>checkout</servlet-name>
+    <url-pattern>/checkout</url-pattern>
+  </servlet-mapping>
+
 </web-app>

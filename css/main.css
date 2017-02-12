@@ -46,6 +46,9 @@
 	display:inline-block;
 	float:left;
 }
+.addToCart{
+	width:40%;background-color:#4aa7f6;padding:4px;margin-top:10px;height:30px;border-radius:5px;color:#FFF;cursor:pointer;
+}
 @media only screen(max-width:1000px){
 	.movies-list{
 		width:750px;
