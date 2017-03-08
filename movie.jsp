@@ -2,7 +2,7 @@
 <%@ page import="java.io.*,java.net.*,java.sql.*,javax.sql.*,java.text.*,java.util.*,javax.servlet.*,javax.servlet.http.*"%>
 <%@ page language="java" import="java.sql.*" errorPage=""%>
 <head>
-	<title>Fablix</title>
+	<title>FabFlix</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" type="image/jpg" href="./images/icon.jpg" />
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
@@ -38,7 +38,7 @@
 		}
     </style>
     <% 
-    	if(session.getAttribute("name")==null) response.sendRedirect("/index.jsp");
+    	if(session.getAttribute("name")==null) response.sendRedirect("/fabflix/");
     %>
     <script type="text/javascript">
     	function placeholder(source){
@@ -48,8 +48,12 @@
 </head>
 <body style="">
 	<div id="mainHeading" class="row" style="">
-		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">Fablix</div>
-		<form class="col-md-6"><input class="inputbox" type="text" id="topsearch" name="search" placeholder="Search" style="border-radius:10px;"></form>
+		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">FabFlix</div>
+		<form class="col-md-6" action="/fabflix/result" method="GET"><input class="inputbox" id="topsearch" type="text" name="search" placeholder="Search" style="border-radius:10px;">
+			<div id="searchDrop" style="position:absolute;top:72px;right:0px;border-radius:5px;width:100%;cursor:pointer;padding:1px 15px;">
+				
+			</div>
+		</form>
 		<div id="customerName" class="col-md-3" Style="margin:35px 0px;font-size:18px;"><span id="drop" style="cursor:pointer;"><%out.print(session.getAttribute("name"));%><i class="material-icons" style="color:#4aa7f6;font-size:15px;">arrow_drop_down</i></span>
 			<div id="nameDropDown" style="position:absolute;top:45px;right:10%;background-color:#FFF;border-radius:5px;box-shadow:3px 2px 22px #888;width:83%;cursor:pointer;display:none;">
 				<div id="cart" style="padding: 25px;box-shadow:1px 1px 6px #888;font-size:15px;">Shopping Cart</div>
@@ -65,8 +69,8 @@
 		</div><br>
 		<div class="row movies-list" style="margin:20px;">
 			<% 
-				String user = "user";
-				String pw = "vidhya567";
+				String user = "testuser";
+				String pw = "testpass";
 				String url = "jdbc:mysql://localhost:3306/moviedb";
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				Connection dbcon  = DriverManager.getConnection(url, user, pw);
@@ -82,7 +86,7 @@
 					String director = movieresult.getString("director");
 					String trailer_url = movieresult.getString("trailer_url");
 
-					out.println("<div class='row movie-card' style='padding:15px;width:100%' movid="+movieID+" href='/Fablix/movie?id="+movieID+"'><div class='cartPoster' style='width:240px;float:left;'><div class='poster' style='width:240px;height:240px;cursor:pointer;'><img src='"+banner_url+"' onerror='placeholder(this)' style='height:100%;width:100%;pointer:cursor;'></div><div class='addToCart' style='width:40%;background-color:#4aa7f6;padding:4px;margin-top:10px;height:30px;border-radius:5px;color:#FFF;cursor:pointer;'>Add to Cart</div></div><div style='margin-left:260px;'><div class='movieID' style='padding:10px;text-align:left;'>Movie ID : "+movieID+"</div><div class='movieTitles' style='padding:10px;text-align:left;'> Movie : "+moviename+"</div><div class='year' style='padding:10px;text-align:left;'>Year : "+year+"</div><div class='director' style='padding:10px;text-align:left;'>Director : "+director+"</div>");
+					out.println("<div class='row movie-card' style='padding:15px;width:100%' movid="+movieID+" href='/fabflix/movie?id="+movieID+"'><div class='cartPoster' style='width:240px;float:left;'><div class='poster' style='width:240px;height:240px;cursor:pointer;'><img src='"+banner_url+"' onerror='placeholder(this)' style='height:100%;width:100%;pointer:cursor;'></div><div class='addToCart' style='width:40%;background-color:#4aa7f6;padding:4px;margin-top:10px;height:30px;border-radius:5px;color:#FFF;cursor:pointer;'>Add to Cart</div></div><div style='margin-left:260px;'><div class='movieID' style='padding:10px;text-align:left;'>Movie ID : "+movieID+"</div><div class='movieTitles' style='padding:10px;text-align:left;'> Movie : "+moviename+"</div><div class='year' style='padding:10px;text-align:left;'>Year : "+year+"</div><div class='director' style='padding:10px;text-align:left;'>Director : "+director+"</div>");
 
 					Statement statement2 = dbcon.createStatement();
 					String starquery = "SELECT star_id from stars_in_movies where movie_id="+movieID;
@@ -95,7 +99,7 @@
 						ResultSet starnameresult = statement3.executeQuery(starnamequery);
 						starnameresult.next();
 						String starname = starnameresult.getString("first_name")+" "+starnameresult.getString("last_name");
-						out.println("<a class='stars_link' href='/Fablix/star?id="+starID+"' style='text-align:left;'>"+starname+"</a>");
+						out.println("<a class='stars_link' href='/fabflix/star?id="+starID+"' style='text-align:left;'>"+starname+"</a>");
 					}
 					out.println("</div>");
 					Statement statement4 = dbcon.createStatement();
@@ -109,7 +113,7 @@
 						ResultSet genrenameresult = statement5.executeQuery(genrenamequery);
 						genrenameresult.next();
 						String genrename = genrenameresult.getString("name");
-						out.println("<a class='genres_list' style='text-align:left;' href='/Fablix/genre?genre="+genrename+"' >"+genrename+"</a>");
+						out.println("<a class='genres_list' style='text-align:left;' href='/fabflix/genre?genre="+genrename+"' >"+genrename+"</a>");
 					}
 					out.println("</div><div class='prices' style='padding:10px;text-align:left;'>Price : $19.99</div>");
 					out.println("<a href="+trailer_url+"' style='display:block;padding:10px;text-align:left;'>"+"view trailer"+"</a>");
@@ -122,16 +126,5 @@
 </body>
 <script src="./js/links.js" type="text/javascript"></script>
 <script type="text/javascript">
-$('#topsearch').keydown(function(event){ 
-	    var keyCode = (event.keyCode ? event.keyCode : event.which);   
-	    if (keyCode == 13) {
-	        var value=$('#topsearch').val();
-	        var url = window.location.href;
-			var loc=window.location.pathname;
-			var get=window.location.search;
-			url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/result?search="+value;
-			window.open(url,"_self");
-	    }
-	});
 </script>
 </html>

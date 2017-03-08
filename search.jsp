@@ -2,7 +2,7 @@
 <%@ page import="java.io.*,java.net.*,java.sql.*,javax.sql.*,java.text.*,java.util.*,javax.servlet.*,javax.servlet.http.*"%>
 <%@ page language="java" import="java.sql.*" errorPage=""%>
 <head>
-	<title>Fablix</title>
+	<title>FabFlix</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" type="image/jpg" href="./images/icon.jpg" />
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
@@ -38,13 +38,17 @@
 		}
     </style>
     <% 
-    	if(session.getAttribute("name")==null) response.sendRedirect("index.jsp");
+    	if(session.getAttribute("name")==null) response.sendRedirect("/fabflix/");
     %>
 </head>
 <body style="">
 	<div id="mainHeading" class="row" style="">
-		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">Fablix</div>
-		<form class="col-md-6"><input class="inputbox" type="text" id="topsearch" name="search" placeholder="Search" style="border-radius:10px;"></form>
+		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">FabFlix</div>
+		<form class="col-md-6" action="/fabflix/result" method="GET"><input class="inputbox" id="topsearch" type="text" name="search" placeholder="Search" style="border-radius:10px;">
+			<div id="searchDrop" style="position:absolute;top:72px;right:0px;border-radius:5px;width:100%;cursor:pointer;padding:1px 15px;">
+				
+			</div>
+		</form>
 		<div id="customerName" class="col-md-3" Style="margin:35px 0px;font-size:18px;"><span id="drop" style="cursor:pointer;"><%out.print(session.getAttribute("name"));%><i class="material-icons" style="color:#4aa7f6;font-size:15px;">arrow_drop_down</i></span>
 			<div id="nameDropDown" style="position:absolute;top:45px;right:10%;background-color:#FFF;border-radius:5px;box-shadow:3px 2px 22px #888;width:83%;cursor:pointer;display:none;">
 				<div id="cart" style="padding: 25px;box-shadow:1px 1px 6px #888;font-size:15px;">Shopping Cart</div>
@@ -84,7 +88,7 @@
 		var star=$("#star").val();
 		var director=$("#director").val();
 		console.log(movie+" "+year+" "+star);
-		var url="/Fablix/result?"
+		var url="/fabflix/result?"
 		var c=0;
 		if(movie){
 			url+="search="+movie;
@@ -107,16 +111,5 @@
 		}
 		if(c==0) alert("Please enter some value to search");
 		else location.replace(url);
-	});
-	$('#topsearch').keydown(function(event){ 
-	    var keyCode = (event.keyCode ? event.keyCode : event.which);   
-	    if (keyCode == 13) {
-	        var value=$('#topsearch').val();
-	        var url = window.location.href;
-			var loc=window.location.pathname;
-			var get=window.location.search;
-			url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/result?search="+value;
-			window.open(url,"_self");
-	    }
 	});
 </script>

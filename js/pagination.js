@@ -1,9 +1,9 @@
-var pageDisplay=10;
-var pageNum=1;
+var pageDisplay=parseInt($("#getValues").attr("disp"));
+var pageNum=parseInt($("#getValues").attr("page"));
 var i;
 
-$(".movie-card").slice(0,pageDisplay).removeClass("hidden");
-var totalMovies=$(".movie-card").length;
+// $(".movie-card").slice(0,pageDisplay).removeClass("hidden");
+var totalMovies=parseInt($("#getValues").attr("total"));
 var totalPages=Math.ceil(totalMovies/pageDisplay);
 
 function writeNumbers(){
@@ -40,43 +40,42 @@ function writeNumbers(){
 	if(pageNum<totalPages-2&&totalPages>6) $(".numbers").append("<span>...</span><span style='padding:0px 8px;cursor:pointer;' onclick='goToPage("+totalPages+")'>"+totalPages+"</span>");
 	else if(totalPages==6&&i<=6) $(".numbers").append("<span style='padding:0px 8px;cursor:pointer;' onclick='goToPage("+totalPages+")'>"+totalPages+"</span>");
 }
+var present=window.location.pathname.substr(9);
 writeNumbers();
-var type=$("#sortOptions").attr("val");
+var type=$("#getValues").attr("sort");
 $("#sortOptions option[value='"+type+"']").attr("selected","selected");
+$("#displayOptions option[value='"+pageDisplay+"']").attr("selected","selected");
 $(".next").click(function(){
 	if(totalPages==pageNum) return;
-	var offset=pageNum*10;
-	var offset1=(pageNum-1)*10;
-	$(".movie-card").slice(offset,offset+pageDisplay).removeClass("hidden");
-	$(".movie-card").slice(offset1,offset1+pageDisplay).addClass("hidden");
 	++pageNum;
-	writeNumbers();
+	var url="/fabflix/"+present+"?sort="+type+"&display="+pageDisplay+"&pagenum="+pageNum;
+	if(present=="result") url+="&search="+$("#getValues").attr("search");
+	location.replace(url);
+});
+$("#sortOptions").change(function(){
+	var val = $("#sortOptions option:selected").attr("value");
+	var url="/fabflix/"+present+"?sort="+val+"&display="+pageDisplay+"&pagenum="+pageNum;
+	if(present=="result") url+="&search="+$("#getValues").attr("search");
+	location.replace(url);
 });
 $(".prev").click(function(){
 	if(pageNum==1) return;
-	var offset=(pageNum-1)*10;
-	var offset1=(pageNum-2)*10;
-	$(".movie-card").slice(offset1,offset1+pageDisplay).removeClass("hidden");
-	$(".movie-card").slice(offset,offset+pageDisplay).addClass("hidden");
 	--pageNum;
-	writeNumbers();
+	var url="/fabflix/"+present+"?sort="+type+"&display="+pageDisplay+"&pagenum="+pageNum;
+	if(present=="result") url+="&search="+$("#getValues").attr("search");
+	location.replace(url);
 });
 function goToPage(num){
 	pageNum=num;
-	var offset=pageNum*10;
-	var offset1=(pageNum-1)*10;
-	$(".movie-card").addClass("hidden");
-	$(".movie-card").slice(offset1,offset1+pageDisplay).removeClass("hidden");		
-	writeNumbers();
+	var url="/fabflix/"+present+"?sort="+type+"&display="+pageDisplay+"&pagenum="+pageNum;
+	if(present=="result") url+="&search="+$("#getValues").attr("search");
+	location.replace(url);
 }
 $("#displayOptions").change(function(){
 	var val = $("#displayOptions option:selected").attr("value");
     pageDisplay=parseInt(val);
     pageNum=1;
-    totalPages=Math.ceil(totalMovies/pageDisplay);
-    var offset=pageNum*10;
-	var offset1=(pageNum-1)*10;
-	$(".movie-card").addClass("hidden");
-	$(".movie-card").slice(offset1,offset1+pageDisplay).removeClass("hidden");
-	writeNumbers();
+	var url="/fabflix/"+present+"?sort="+type+"&display="+pageDisplay+"&pagenum="+pageNum;
+	if(present=="result") url+="&search="+$("#getValues").attr("search");
+	location.replace(url);
 });

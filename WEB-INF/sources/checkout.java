@@ -19,8 +19,8 @@ public class checkout extends HttpServlet
 	public void doGet(HttpServletRequest request , HttpServletResponse response)
 		throws IOException, ServletException
 	{
-		String user = "user";
-		String pw = "vidhya567";
+		String user = "testuser";
+		String pw = "testpass";
 		String url = "jdbc:mysql://localhost:3306/moviedb";
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();

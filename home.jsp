@@ -3,7 +3,7 @@
 <%@ page language="java" import="java.sql.*" errorPage=""%>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Fablix</title>
+	<title>FabFlix</title>
 	<link rel="icon" type="image/jpg" href="./images/icon.jpg" />
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 	<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
@@ -36,23 +36,38 @@
 				width:100%;
 			}
 		}
+		.popup-card{
+			padding: 15px;
+		    width: 60% !important;
+		    display: inline-block;
+		    float: left;
+		    position: absolute;
+		    left: 0;
+		    margin-left: 20%;
+		    background: #FFF;
+		    box-shadow: 1px 1px 6px #888;
+		}
     </style>
     <% 
-    	if(session.getAttribute("name")==null) response.sendRedirect("index.jsp");
+    	if(session.getAttribute("name")==null) response.sendRedirect("/fabflix/");
     %>
     <script>
     	function placeholder(source){
 			$(source).attr("src",'./images/placeholder-movie.png');
 		}
-    	if(window.location.pathname=="/Fablix/login"){
-    		location.replace("/Fablix/home");
+    	if(window.location.pathname=="/fabflix/login"){
+    		location.replace("/fabflix/home");
     	}
     </script>
 </head>
 <body style="">
 	<div id="mainHeading" class="row" style="">
-		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">Fablix</div>
-		<form class="col-md-6"><input class="inputbox" id="topsearch" type="text" name="search" placeholder="Search" style="border-radius:10px;"></form>
+		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">FabFlix</div>
+		<form class="col-md-6" action="/fabflix/result" method="GET"><input class="inputbox" id="topsearch" type="text" name="search" placeholder="Search" style="border-radius:10px;">
+			<div id="searchDrop" style="position:absolute;top:72px;right:0px;border-radius:5px;width:100%;cursor:pointer;padding:1px 15px;">
+				
+			</div>
+		</form>
 		<div id="customerName" class="col-md-3" Style="margin:35px 0px;font-size:18px;"><span id="drop" style="cursor:pointer;"><%out.print(session.getAttribute("name"));%><i class="material-icons" style="color:#4aa7f6;font-size:15px;">arrow_drop_down</i></span>
 			<div id="nameDropDown" style="position:absolute;top:45px;right:10%;background-color:#FFF;border-radius:5px;box-shadow:3px 2px 22px #888;width:83%;cursor:pointer;display:none;">
 				<div id="cart" style="padding: 25px;box-shadow:1px 1px 6px #888;font-size:15px;">Shopping Cart</div>
@@ -63,15 +78,33 @@
 	<center>
 		<div id="genresList" class="row" style="">
 			<% 
-				String user = "user";
-				String pw = "vidhya567";
+				String user = "testuser";
+				String pw = "testpass";
 				String url = "jdbc:mysql://localhost:3306/moviedb";
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				Connection dbcon  = DriverManager.getConnection(url, user, pw);
 				String sortType=request.getParameter("sort");
+				String displayType=request.getParameter("display");
+				String pagenum=request.getParameter("pagenum");
 				int sort=1;
+				int disp=10;
+				int currPage=1;
 				if(sortType==null){}
 				else sort=Integer.parseInt(sortType);
+				if(displayType==null){}
+				else disp=Integer.parseInt(displayType);
+				if(pagenum==null){}
+				else currPage=Integer.parseInt(pagenum);
+				Statement countStatement= dbcon.createStatement();
+				String counts="Select count(*) as count from movies;";
+				ResultSet count = countStatement.executeQuery(counts);
+				int totalCount=11384;
+				if(count.next()){
+					totalCount=count.getInt(1);
+				}
+				if(currPage<1) currPage=1;
+				out.println("<div class='hidden' id='getValues' disp="+disp+" page="+currPage+" total="+totalCount+" sort="+sort+"></div>");
+				currPage=(currPage-1)*disp;
 			%>
 			<button type="button" id="browseMovie" class="btn btn-default" style="margin: 25px 20px 0px;width:140px;">Browse by Movies</button>
 			<button type="button" id="browsegenre" class="btn btn-default" style="margin: 25px 20px 0px;width:140px;">Browse by Genres</button>
@@ -93,9 +126,9 @@
 			<option value="25">25</option>
 			<option value="50">50</option>
 		</select><br>
-		<button type="button" id="" class="btn btn-default prev disabled" style="">Prev</button>
+		<button type="button" id="" class="btn btn-default prev disabled" style="opacity:1;">Prev</button>
 		<div class="numbers" style="display:inline;padding:15px;"></div>
-		<button type="button" id="" class="btn btn-default next" style="">Next</button>
+		<button type="button" id="" class="btn btn-default next" style="opacity:1;">Next</button>
 		<div class="row movies-list" style="margin:20px;">
 			<% 
 				Statement statement1 = dbcon.createStatement();
@@ -115,6 +148,7 @@
 					break;
 					default: moviequery+=" order by title";
 				}
+				moviequery+=" limit "+disp+" offset "+currPage;
 				ResultSet movieresult = statement1.executeQuery(moviequery);
 				int i=1;
 				while(movieresult.next())
@@ -124,7 +158,7 @@
 					String banner_url = movieresult.getString("banner_url");
 					int year = movieresult.getInt("year");
 					String director = movieresult.getString("director");
-					out.println("<div class='row movie-card hidden' style='padding:15px;width:100%' movid="+movieID+" href='/Fablix/movie?id="+movieID+"'><div class='cartPoster' style='width:240px;float:left;'><div class='poster' style='width:240px;height:240px;cursor:pointer;'><img src='"+banner_url+"' onerror='placeholder(this)' style='height:100%;width:100%;pointer:cursor;'></div><div class='addToCart' style='width:40%;background-color:#4aa7f6;padding:4px;margin-top:10px;height:30px;border-radius:5px;color:#FFF;cursor:pointer;'>Add to Cart</div></div><div style='margin-left:260px;'><div class='movieID' style='padding:10px;text-align:left;'>Movie ID : "+movieID+"</div><div class='movieTitles' style='padding:10px;text-align:left;'> Movie : <a href='/Fablix/movie?id="+movieID+"'>"+moviename+"</a></div><div class='year' style='padding:10px;text-align:left;'>Year : "+year+"</div><div class='director' style='padding:10px;text-align:left;'>Director : "+director+"</div>");
+					out.println("<div class='row movie-card' style='padding:15px;width:100%' movid="+movieID+" href='/fabflix/movie?id="+movieID+"'><div class='cartPoster' style='width:240px;float:left;'><div class='poster' style='width:240px;height:240px;cursor:pointer;'><img src='"+banner_url+"' onerror='placeholder(this)' style='height:100%;width:100%;pointer:cursor;'></div><div class='addToCart' style='width:40%;background-color:#4aa7f6;padding:4px;margin-top:10px;height:30px;border-radius:5px;color:#FFF;cursor:pointer;'>Add to Cart</div></div><div style='margin-left:260px;'><div class='movieID' style='padding:10px;text-align:left;'>Movie ID : "+movieID+"</div><div class='movieTitles' style='padding:10px;text-align:left;'> Movie : <a href='/fabflix/movie?id="+movieID+"'>"+moviename+"</a></div><div class='year' style='padding:10px;text-align:left;'>Year : "+year+"</div><div class='director' style='padding:10px;text-align:left;'>Director : "+director+"</div>");
 					Statement statement2 = dbcon.createStatement();
 					String starquery = "SELECT star_id from stars_in_movies where movie_id="+movieID;
 					ResultSet starresult = statement2.executeQuery(starquery);
@@ -136,7 +170,7 @@
 						ResultSet starnameresult = statement3.executeQuery(starnamequery);
 						starnameresult.next();
 						String starname = starnameresult.getString("first_name")+" "+starnameresult.getString("last_name");
-						out.println("<a class='stars_link' href='/Fablix/star?id="+starID+"' style='text-align:left;display: block;'>"+starname+"</a>");
+						out.println("<a class='stars_link' href='/fabflix/star?id="+starID+"' style='text-align:left;display: block;'>"+starname+"</a>");
 					}
 					out.println("</div>");
 					Statement statement4 = dbcon.createStatement();
@@ -168,19 +202,23 @@
 <script src="./js/pagination.js" type="text/javascript"></script>
 <script type="text/javascript">
 	if(document.cookie.substring(9)=="") document.cookie = "username="+$("#customerName").text();
-	$("#sortOptions").change(function(){
-		var val = $("#sortOptions option:selected").attr("value");
-	    location.replace("/Fablix/home?sort="+val);
-	});
-	$('#topsearch').keydown(function(event){ 
-	    var keyCode = (event.keyCode ? event.keyCode : event.which);   
-	    if (keyCode == 13) {
-	        var value=$('#topsearch').val();
-	        var url = window.location.href;
-			var loc=window.location.pathname;
-			var get=window.location.search;
-			location.replace("/Fablix/result?search="+value);
-	    }
+	$(".movie-card").hover(function(){
+		$(".popup-card").remove();
+		clone=$(this).clone();
+		//console.log($(this));
+		var height=$(this).css("height");
+		clone.css("margin-top","-"+height);
+		clone.find(".cartPoster").css("width","300px").css("margin-left","15%");
+		clone.find(".poster").css("height","300px").css("width","300px");
+		clone.find(".movieID").parent().css("margin-left","60%");
+		clone.removeClass("movie-card").addClass("popup-card"); 
+		$(this).append(clone);
+		$(".popup-card").hover(function(){},function(){
+			$(".popup-card").remove();
+		});
+	},function(){ 
+		
+		//console.log("Hover"); 
 	});
 </script>
 </html>

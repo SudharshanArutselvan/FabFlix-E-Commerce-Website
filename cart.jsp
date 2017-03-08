@@ -2,7 +2,7 @@
 <%@ page import="java.io.*,java.net.*,java.sql.*,javax.sql.*,java.text.*,java.util.*,javax.servlet.*,javax.servlet.http.*"%>
 <%@ page language="java" import="java.sql.*" errorPage=""%>
 <head>
-	<title>Fablix</title>
+	<title>FabFlix</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" type="image/jpg" href="./images/icon.jpg" />
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
@@ -38,7 +38,7 @@
 		}
     </style>
     <% 
-    	if(session.getAttribute("name")==null) response.sendRedirect("index.jsp");
+    	if(session.getAttribute("name")==null) response.sendRedirect("/fabflix/");
     %>
     <script type="text/javascript">
     	function placeholder(source){
@@ -48,8 +48,12 @@
 </head>
 <body style="">
 	<div id="mainHeading" class="row" style="">
-		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">Fablix</div>
-		<form class="col-md-6"><input class="inputbox" type="text" id="topsearch" name="search" placeholder="Search" style="border-radius:10px;"></form>
+		<div class="col-md-3" id="logoHeading" style="margin:21px 0px;left:0;cursor:pointer;">FabFlix</div>
+		<form class="col-md-6" action="/fabflix/result" method="GET"><input class="inputbox" type="text" id="topsearch" name="search" placeholder="Search" style="border-radius:10px;">
+			<div id="searchDrop" style="position:absolute;top:72px;right:0px;border-radius:5px;width:100%;cursor:pointer;padding:1px 15px;">
+				
+			</div>
+		</form>
 		<div id="customerName" class="col-md-3" Style="margin:35px 0px;font-size:18px;" uname="<%out.print(session.getAttribute("name"));%>"><span id="drop" style="cursor:pointer;"><%out.print(session.getAttribute("name"));%><i class="material-icons" style="color:#4aa7f6;font-size:15px;">arrow_drop_down</i></span>
 			<div id="nameDropDown" style="position:absolute;top:45px;right:10%;background-color:#FFF;border-radius:5px;box-shadow:3px 2px 22px #888;width:83%;cursor:pointer;display:none;">
 				<div id="cart" style="padding: 25px;box-shadow:1px 1px 6px #888;font-size:15px;">Shopping Cart</div>
@@ -65,8 +69,8 @@
 		</div><br>
 		<div class="row movies-list" style="margin:20px;">
 			<% 
-				String user = "user";
-				String pw = "vidhya567";
+				String user = "testuser";
+				String pw = "testpass";
 				String url = "jdbc:mysql://localhost:3306/moviedb";
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				Connection dbcon  = DriverManager.getConnection(url, user, pw);
@@ -75,14 +79,16 @@
 				String[] items={""};
 				int i=0,flag=0;
 				for (String retval: headerCookie.split(";")) {
-			        if(retval.substring(1,6).compareTo("movie")==0){
-			        	if(retval.substring(7).compareTo("")==0){ flag=1; break; }
-			        	else if(retval.substring(7).compareTo("[]")==0){ flag=1; break; }
-			        	else items=(retval.substring(7)).replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
-			        } 
-					i++;
+					if(retval.length()>=6){
+						if(retval.substring(1,6).compareTo("movie")==0){
+							i=10;
+				        	if(retval.substring(7).compareTo("")==0){ flag=1; break; }
+				        	else if(retval.substring(7).compareTo("[]")==0){ flag=1; break; }
+				        	else items=(retval.substring(7)).replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\\s", "").split(",");
+				        }
+					}
 			    }
-			    if(i<3) flag=1;
+			    if(i==0) flag=1;
 			    if(flag==1) out.println("<div id='noMovie'>Your shopping cart is empty!</div>");
 			    else{
 			    	int[] movIDarr = new int[items.length];
@@ -118,7 +124,7 @@
 								int year = movieresult.getInt("year");
 								String director = movieresult.getString("director");
 								double total=19.99*numMov[j];
-								out.println("<div class='row movie-card' style='padding:15px;width:100%' movid="+movieID+" href='/Fablix/movie?id="+movieID+"'><div class='movieID' style='padding:10px;text-align:left;display:inline'>Movie ID : "+movieID+"</div><div class='movieTitles' style='padding:10px;text-align:left;display:inline'> Movie : "+moviename+"</div><div class='quantity' style='padding:10px;text-align:left;display:inline'>Quantity : "+numMov[j]+"</div><div class='price' style='padding:10px;text-align:left;display:inline'>Price : $19.99</div><br><label for='qt' style='color:#ccc;'>Enter quantity to change</label><input id='changeQuantity' type='text' name='qt' old="+numMov[j]+" style='width:50px;padding:5px 10px;margin:15px;font-size:14px;'><button type='button' class='updateQuantity btn btn-default' style='margin: 0px 20px;width:100px;''>Update</button><br><div class='total' style='padding:10px;text-align:left;display:inline'>Total Price : $"+total+"</div></div>");
+								out.println("<div class='row movie-card' style='padding:15px;width:100%' movid="+movieID+" href='/fabflix/movie?id="+movieID+"'><div class='movieID' style='padding:10px;text-align:left;display:inline'>Movie ID : "+movieID+"</div><div class='movieTitles' style='padding:10px;text-align:left;display:inline'> Movie : "+moviename+"</div><div class='quantity' style='padding:10px;text-align:left;display:inline'>Quantity : "+numMov[j]+"</div><div class='price' style='padding:10px;text-align:left;display:inline'>Price : $19.99</div><br><label for='qt' style='color:#ccc;'>Enter quantity to change</label><input id='changeQuantity' type='text' name='qt' old="+numMov[j]+" style='width:50px;padding:5px 10px;margin:15px;font-size:14px;'><button type='button' class='updateQuantity btn btn-default' style='margin: 0px 20px;width:100px;''>Update</button><br><div class='total' style='padding:10px;text-align:left;display:inline'>Total Price : $"+total+"</div></div>");
 								sum+=total;
 							}	
 						}
@@ -226,7 +232,7 @@
 			var date=$("#date").val();
 			console.log(name+" "+creditcard+" "+date);
 			$.ajax({
-			  url: "/Fablix/checkout",
+			  url: "/fabflix/checkout",
 			  method: "GET",
 			  data:{"id":creditcard,"date":date}
 			}).done(function(msg) {
@@ -244,17 +250,6 @@
 		else {
 			alert("Username is wrong");
 		}
-	});
-	$('#topsearch').keydown(function(event){ 
-	    var keyCode = (event.keyCode ? event.keyCode : event.which);   
-	    if (keyCode == 13) {
-	        var value=$('#topsearch').val();
-	        var url = window.location.href;
-			var loc=window.location.pathname;
-			var get=window.location.search;
-			url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/result?search="+value;
-			window.open(url,"_self");
-	    }
 	});
 </script>
 </html>

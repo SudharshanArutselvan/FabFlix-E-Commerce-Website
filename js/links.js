@@ -10,28 +10,28 @@ $("#browsegenre").click(function(){
 	var url = window.location.href;
 	var loc=window.location.pathname;
 	var get=window.location.search;
-	url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/genre";
+	url=url.substring(0,url.length-loc.length-get.length)+"/fabflix/genre";
 	window.open(url,"_self");
 });
 $("#browseMovie").click(function(){
 	var url = window.location.href;
 	var loc=window.location.pathname;
 	var get=window.location.search;
-	url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/home";
+	url=url.substring(0,url.length-loc.length-get.length)+"/fabflix/home";
 	window.open(url,"_self");
 });
 $("#searchMovie").click(function(){
 	var url = window.location.href;
 	var loc=window.location.pathname;
 	var get=window.location.search;
-	url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/search";
+	url=url.substring(0,url.length-loc.length-get.length)+"/fabflix/search";
 	window.open(url,"_self");
 });
 $("#logoHeading").click(function(){
 	var url = window.location.href;
 	var loc=window.location.pathname;
 	var get=window.location.search;
-	url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/home";
+	url=url.substring(0,url.length-loc.length-get.length)+"/fabflix/home";
 	window.open(url,"_self");
 });
 $(".addToCart").click(function(){
@@ -70,7 +70,7 @@ $("#cart").click(function(){
 	var url = window.location.href;
 	var loc=window.location.pathname;
 	var get=window.location.search;
-	url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/cart";
+	url=url.substring(0,url.length-loc.length-get.length)+"/fabflix/cart";
 	window.open(url,"_self");
 });
 $("#logoff").click(function(){
@@ -82,9 +82,25 @@ $("#logoff").click(function(){
 	var url = window.location.href;
 	var loc=window.location.pathname;
 	var get=window.location.search;
-	url=url.substring(0,url.length-loc.length-get.length)+"/Fablix/logout";
+	url=url.substring(0,url.length-loc.length-get.length)+"/fabflix/logout";
 	window.open(url,"_self");
 });
 $("#drop").click(function(){
 	$("#nameDropDown").toggle();
 });
+$("#topsearch").on('keyup',function(event){
+		var str=$("#topsearch").val();
+		var keyCode = (event.keyCode ? event.keyCode : event.which);
+		if(keyCode==8&&str==""){
+			$("#searchDrop").find("div").remove();
+			return;
+		}
+		$.ajax({
+			url: "/fabflix/searchBar",
+			method: "GET",
+		    data:{"searchStr":str}
+		}).done(function(msg) {
+			$("#searchDrop").find("div").remove();
+			$("#searchDrop").html(msg);
+		});
+	});

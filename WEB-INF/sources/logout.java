@@ -28,7 +28,7 @@ public class logout extends HttpServlet
 			HttpSession session = request.getSession(true);
 			session.invalidate();
 			request.setAttribute("logout",true);
-    		response.sendRedirect("/Fablix/");
+    		response.sendRedirect("/fabflix/");
 		}
 		catch(java.lang.Exception ex)
         {

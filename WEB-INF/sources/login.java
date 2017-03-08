@@ -9,6 +9,20 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+//import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+ 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.net.ssl.HttpsURLConnection;
 public class login extends HttpServlet
 {
 
@@ -16,14 +30,89 @@ public class login extends HttpServlet
 	{
 		return "Servlet connected";
 	}
+	public static final String SITE_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+    public static final String SECRET_KEY = "6Lf7zRUUAAAAAM4Ni5qepNS5qIBHvld0QOjsoMbz";
+    
 	public void doPost(HttpServletRequest request , HttpServletResponse response)
 		throws IOException, ServletException
 	{
-		String user = "user";
-		String pw = "vidhya567";
-		String url = "jdbc:mysql://localhost:3306/moviedb";
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
+
+		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+		//out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+		// Verify CAPTCHA.
+		boolean valid=true;
+		if (gRecaptchaResponse == null || gRecaptchaResponse.length() == 0) {
+            valid= false;
+        }
+ 
+        try {
+            URL verifyUrl = new URL(SITE_VERIFY_URL);
+ 
+            // Open Connection to URL
+            HttpsURLConnection conn = (HttpsURLConnection) verifyUrl.openConnection();
+ 
+  
+            // Add Request Header
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+ 
+ 
+            // Data will be sent to the server.
+            String postParams = "secret=" + SECRET_KEY + "&response=" + gRecaptchaResponse;
+ 
+            // Send Request
+            conn.setDoOutput(true);
+            
+            // Get the output stream of Connection
+            // Write data in this stream, which means to send data to Server.
+            OutputStream outStream = conn.getOutputStream();
+            outStream.write(postParams.getBytes());
+ 
+            outStream.flush();
+            outStream.close();
+ 
+            // Response code return from server.
+            int responseCode = conn.getResponseCode();
+ 
+  
+            // Get the InputStream from Connection to read data sent from the server.
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+			StringBuffer res = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				res.append(inputLine);
+			}
+			in.close();
+
+			// out.println("Response JSON:"+res.toString());
+ 			
+            JsonReader jsonReader = Json.createReader(new StringReader(res.toString()));
+            JsonObject jsonObject = jsonReader.readObject();
+            jsonReader.close();
+ 
+            boolean success = jsonObject.getBoolean("success");
+            valid=success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.println("Error MEssage:"+e.getMessage());
+            valid= false;
+        }
+		if (!valid) {
+		    //errorString = "Captcha invalid!";
+		    out.println("<HTML>" +
+				"<HEAD><TITLE>" +
+				"ReCpatcha: Error" +
+				"</TITLE></HEAD>\n<BODY>" +
+				"<P>Recaptcha WRONG!!!! </P></BODY></HTML>");
+		    return;
+		}
+		String user = "testuser";
+		String pw = "testpass";
+		String url = "jdbc:mysql://localhost:3306/moviedb";
 
 		try
 		{
@@ -66,7 +155,7 @@ public class login extends HttpServlet
 			    }
 			    session.setAttribute("name", sessionName); 
 			    session.setAttribute("check", check); 
-				request.getRequestDispatcher("index.jsp").include(request,response);
+				request.getRequestDispatcher("/").include(request,response);
 				result.close();
 				statement.close();
 				dbcon.close();
@@ -79,7 +168,7 @@ public class login extends HttpServlet
         	String check = (String)session.getAttribute("check");
 		    session.setAttribute("check", "failed"); 
         	request.setAttribute("login",false);
-        	request.getRequestDispatcher("index.jsp").include(request,response);
+        	request.getRequestDispatcher("/").include(request,response);
                 // out.println("<HTML>" +
                 //             "<HEAD><TITLE>" +
                 //             "MovieDB: Error" +
