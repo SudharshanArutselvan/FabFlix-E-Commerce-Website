@@ -1,0 +1,23 @@
+Project 5 - Fabflix scaling report
+
+Two separate instances were created in AWS and both the instances have separate tomcat and MySQL servers.
+First instance( Master Instance - Private IP: 172.31.3.200 Public DNS: ec2-52-40-45-138.us-west-2.compute.amazonaws.com) is master.
+Second instance( Slave Instance - Private IP: 172.31.0.7 public DNS: ec2-54-70-169-166.us-west-2.compute.amazonaws.com) is slave.
+
+The MySQL instance of slave has been pointed to the last log pointer of master and both has been synced.
+All changes made in master will be instantly replicated in slave.
+
+Another instance Load Balancer (Private IP: 172.31.7.119 public DNS: ec2-35-164-203-85.us-west-2.compute.amazonaws.com) has been created.
+
+Apache server has been installed in Load Balancer instance. The 000-default.conf has been modified to balance the load as given in the example.
+For maintaining Session Sticky session has been used in the file.
+Also, for redirecting all the urls to modify the database has been directed to master instance only using the proxypass and proxypassreverse.
+Hence, the session is maintained and the redirected write requests to master instance only.
+
+The requests are sent through public dns of Load balancer. The balancer correctly uses round robin to connect different requests to different servers.
+Sticky session has been checked in logs of the two instances. 
+Logged into fabflix and checked if all the requests following it were on the same instance and it worked.
+
+Connection pooling was done the same way as in task 1. Created the context.xml file for each server separately.
+For each server connection pooling is done separately.
+Connection for first instance have differnt data source as to second.

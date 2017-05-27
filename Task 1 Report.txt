@@ -1,0 +1,38 @@
+Project 5 - Connection Pooling Report
+
+Team ID : 01
+
+Team Members: Natarajan Chidhambharam, Sudharshan Arutselvan, Vidhyasagar Thirumaraiselvan
+
+
+Connection pooling is used in all servlets and JSPs that are creating connection with the MySQL database.
+
+As given in the example, context.xml file containing the details about the MySQL server and login details were created.
+
+Using this context.xml a data source is created in the servelets/JSPs.
+
+The datasource is then used to get the connection.
+
+We replaced all the normal connections we made using drivermanager were replaced with the context reading and connection usign datasource.
+
+Once the connection to the database is not needed the connection is closed so that the next request could be handled using those objects.
+
+We have tried connection pooling in the JSPs too and it seems to work fine.
+
+There seems to be no difference since JSPs are then converted to java files which will do similar work as servlets.
+
+The libraries needed could be imported in JSP and the code when compiled using JASPER gets converted to normal Java code.
+
+Connection pooling thus works in JSPs too.
+
+
+Files that have used connection pooling:
+
+home.jsp, genre.jsp, result.jsp, cart.jsp, employee.jsp, movie.jsp, stars.jsp.
+addMovie.java, chekcout.java, emplogin.java, insertStar.java, login.java, metadata.java, searchBar.java.
+
+
+Connection Pooling in Task 2:
+
+For task 2 the connection pooling is done separately on both servers.
+Different parameters and different sources for each servers.

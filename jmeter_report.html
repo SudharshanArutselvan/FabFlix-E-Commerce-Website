@@ -1,0 +1,114 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    background-color: linen;
+}
+
+td {
+    border-top-style: solid;
+}
+</style>
+</head>
+<body>
+
+<table style="width:100%">
+  <tr style="font-weight:bold; background-color: orange">
+    <td width="300px">Single-instance version cases</td>
+    <td>Graph Results Screenshot</td>
+    <td>Average Query Time(ms)</td>
+    <td>Average Search Servlet Time(ms)</td>
+    <td>Average JDBC Time(ms)</td>
+    <td>Analysis</td>
+  </tr>
+  <tr>
+    <td>Case 1: HTTP/1 thread</td>
+    <td><img src="./images/graph_results_case1.png" alt="Graph Results Screenshot Case 1" style="width:304px;height:228px;"></td>
+    <td>76 ms</td>
+    <td>25 ms</td>
+    <td>25 ms</td>
+    <td>Throughput is 759.388 transactions/minute which is roughly 12.6 requests per second.</td>
+  </tr>
+  <tr>
+    <td>Case 2: HTTP/10 threads</td>
+    <td><img src="./images/graph_results_case2.png" alt="Graph Results Screenshot Case 2" style="width:304px;height:228px;"></td>
+    <td>255 ms</td>
+    <td>201 ms</td>
+    <td>201 ms</td>
+    <td>Throughput is 2290.507 transactions/minute which is roughly 38 requests per second. As number of users increase the throughput also increases.</td>
+  </tr>
+  <tr>
+    <td>Case 3: HTTPS/10 threads</td>
+    <td><img src="./images/graph_results_case3.png" alt="Graph Results Screenshot Case 3" style="width:304px;height:228px;"></td>
+    <td>262 ms</td>
+    <td>204 ms</td>
+    <td>204 ms</td>
+    <td>Throughput is 2228.851 transactions/minute which is roughly 37 requests per second. As compared to http requests, the https requests takes longer response time for the initial requests. AS it goes on, due to prepared statements the responses get shorter.</td>
+  </tr>
+  <tr>
+    <td>Case 4: HTTP/10 threads/No prepared statements</td>
+    <td><img src="./images/graph_results_case4.png" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>254 ms</td>
+    <td>196 ms</td>
+    <td>196 ms</td>
+    <td>Throughput is 2264.216 transactions/minute which is roughly 37.7 requests per second.</td>
+  </tr>
+  <tr>
+    <td>Case 5: HTTP/10 threads/No connection pooling</td>
+    <td><img src="./images/graph_results_case5.png" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>300 ms</td>
+    <td>243 ms</td>
+    <td>243 ms</td>
+    <td>Throughput is 1948.699 transactions/minute which is roughly 32 requests per second. Without connection pooling the connection to databases takes much longer and hence the response time increases and throughput decreases.</td>
+  </tr>
+
+</table> 
+
+
+<table style="width:100%">
+  <tr style="font-weight:bold; background-color: orange">
+    <td width="300px">Scaled version cases</td>
+    <td>Graph Results Screenshot</td>
+    <td>Average Query Time(ms)</td>
+    <td>Average Search Servlet Time(ms)</td>
+    <td>Average JDBC Time(ms)</td>
+    <td>Analysis</td>
+  </tr>
+  <tr>
+    <td>Case 1: HTTP/1 thread</td>
+    <td><img src="./images/graph_results_case6.png" alt="Graph Results Screenshot Case 1" style="width:304px;height:228px;"></td>
+    <td>90 ms</td>
+    <td>29 ms</td>
+    <td>29 ms</td>
+    <td>Throughput is 648.532 transactions/minute which is roughly 11 requests per second. Since scaled version has to go through the load balancer there is a delay in the responses.</td>
+  </tr>
+  <tr>
+    <td>Case 2: HTTP/10 threads</td>
+    <td><img src="./images/graph_results_case7.png" alt="Graph Results Screenshot Case 2" style="width:304px;height:228px;"></td>
+    <td>214 ms</td>
+    <td>137.5 ms</td>
+    <td>137.5 ms</td>
+    <td>Throughput is 2674.637 transactions/minute which is roughly 44.6 requests per second. As the number of users increase, the performance of scaled version is better than single isntance version. The scaled version handles requests better by balancing the load.</td>
+  </tr>
+  <tr>
+    <td>Case 3: HTTP/10 threads/No prepared statements</td>
+    <td><img src="./images/graph_results_case8.png" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>220 ms</td>
+    <td>145.5 ms</td>
+    <td>145.5 ms</td>
+    <td>Throughput is 2539.235 transactions/minute which is roughly 42 requests per second. As the number of users increase, the performance of scaled version is better than single isntance version. The scaled version handles requests better by balancing the load.</td>
+  </tr>
+  <tr>
+    <td>Case 4: HTTP/10 threads/No connection pooling</td>
+    <td><img src="./images/graph_results_case9.png" alt="Graph Results Screenshot Case 4" style="width:304px;height:228px;"></td>
+    <td>218 ms</td>
+    <td>143.5 ms</td>
+    <td>143.5 ms</td>
+    <td>Throughput is 2586.418 transactions/minute which is roughly 43 requests per second. As the number of users increase, the performance of scaled version is better than single isntance version. The scaled version handles requests better by balancing the load.</td>
+  </tr>
+
+</table> 
+
+</body>
+</html>
